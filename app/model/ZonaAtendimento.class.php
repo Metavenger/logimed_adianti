@@ -8,7 +8,7 @@ class ZonaAtendimento extends TRecord
     
     function __construct($id = NULL)
     {
-        parent::__construct();
+        parent::__construct($id);
         parent::addAttribute('descricao');
     }
 }

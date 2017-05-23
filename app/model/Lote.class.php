@@ -8,7 +8,7 @@ class Lote extends TRecord
     
     function __construct($id = NULL)
     {
-        parent::__construct();
+        parent::__construct($id);
         parent::addAttribute('numero');
         parent::addAttribute('peso');
         parent::addAttribute('valor');

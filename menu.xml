@@ -11,4 +11,36 @@
             </menuitem>
         </menu>
     </menuitem>
+    <menuitem label='Cadastros'>
+        <menu>
+            <menuitem label='Cadastros de Negócio'>
+                <menu>
+                    <menuitem label='Lote'>
+                        <icon></icon>
+                        <action>LoteList</action>
+                    </menuitem>
+                    <menuitem label='Transportadora'>
+                        <icon></icon>
+                        <action>TransportadoraList</action>
+                    </menuitem>
+                </menu>
+            </menuitem>
+            <menuitem label='Definições de Sistema'>
+                <menu>
+                    <menuitem label='Tipo de Descarte'>
+                        <icon></icon>
+                        <action>TipoDescarteList</action>
+                    </menuitem>
+                </menu>
+                <menu>  
+                </menu>
+                <menu>
+                    <menuitem label='Zona de Atendimento'>
+                        <icon></icon>
+                        <action>ZonaAtendimentoList</action>
+                    </menuitem>
+                </menu>
+            </menuitem>
+        </menu>
+    </menuitem>
 </menu>

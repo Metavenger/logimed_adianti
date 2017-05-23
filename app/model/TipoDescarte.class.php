@@ -6,9 +6,9 @@ class TipoDescarte extends TRecord
     const PRIMARYKEY = 'id';
     const IDPOLICY = 'serial';
     
-    function __construct($id = NULL)
+    public function __construct($id = NULL)
     {
-        parent::__construct();
+        parent::__construct($id);
         parent::addAttribute('grupo');
         parent::addAttribute('descricao');
     }

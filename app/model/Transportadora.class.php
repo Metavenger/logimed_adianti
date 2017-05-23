@@ -2,13 +2,13 @@
 
 class Transportadora extends TRecord
 {
-    const TABLENAME = 'lote';
+    const TABLENAME = 'transportadora';
     const PRIMARYKEY = 'id';
     const IDPOLICY = 'serial';
     
     function __construct($id = NULL)
     {
-        parent::__construct();
+        parent::__construct($id);
         parent::addAttribute('nome');
         parent::addAttribute('preco');
         parent::addAttribute('avaliacao');
