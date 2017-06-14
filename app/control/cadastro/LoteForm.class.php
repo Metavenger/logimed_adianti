@@ -38,9 +38,13 @@ class LoteForm extends TPage
         $valor = new TEntry('valor');
         $temperatura = new TEntry('temperatura');
         $tipodescarte_id = new TDBCombo('tipodescarte_id', 'logimed', 'TipoDescarte', 'id', 'descricao', 'grupo');
-        $flag_esgotado = new TCombo('flag_esgotado');
-        $flag_esgotado->setValue(TSession::getValue('flag_esgotado'));
-        $flag_esgotado->addItems(array('S'=>'Sim','N'=>'Não'));
+        $fl_descarte = new TCombo('fl_descarte');
+        $fl_descarte->setValue(TSession::getValue('fl_descarte'));
+        $fl_descarte->addItems(array('S'=>'Sim','N'=>'Não'));
+        $estoque_atual = new TEntry('estoque_atual');
+        $total_estoque = new TEntry('total_estoque');
+        $dt_descarte = new TDate('dt_descarte');
+        $dt_descarte->setMask('dd/mm/yyyy');
 
 
         // add the fields
@@ -50,10 +54,10 @@ class LoteForm extends TPage
         $this->form->addQuickField('Valor', $valor,  85, new TRequiredValidator);
         $this->form->addQuickField('Temperatura', $temperatura,  85 , new TRequiredValidator);
         $this->form->addQuickField('Tipo de Descarte', $tipodescarte_id,  230 , new TRequiredValidator);
-        $this->form->addQuickField('Esgotado?', $flag_esgotado,  85 , new TRequiredValidator);
-
-
-
+        $this->form->addQuickField('Descarte?', $fl_descarte,  85 , new TRequiredValidator);
+        $this->form->addQuickField('Estoque Atual', $estoque_atual, 85);
+        $this->form->addQuickField('Total Estoque', $total_estoque, 85);
+        $this->form->addQuickField('Data de Descarte', $dt_descarte, 100);
         
         if (!empty($id))
         {
@@ -78,5 +82,54 @@ class LoteForm extends TPage
         $container->add($this->form);
         
         parent::add($container);
+    }
+    
+    function onSave()
+    {
+        try
+        {
+            TTransaction::open('logimed');
+            
+            // get the form data into an active record Magistrado
+            $object = $this->form->getData('Lote');
+                      
+            // fill the form with the active record data
+            $this->form->setData($object);
+            
+            // form validation
+            $this->form->validate();
+            
+            if($object->estoque_atual > $object->total_estoque)
+            {
+                throw new Exception('Estoque atual não pode ser superior ao Total em estoque');
+            }
+            
+            if(isset($object->dt_descarte) and $object->dt_descarte != '' and $object->fl_descarte != 'S')
+            {
+                throw new Exception('Lote não foi marcado para descarte.');
+            }
+            else
+            {
+                $object->dt_descarte = TDate::date2us($object->dt_descarte);
+            }
+            
+            // stores the object
+            $object->store();
+            
+            // close the transaction
+            TTransaction::close();
+            
+            // shows the success message
+            new TMessage('info', TAdiantiCoreTranslator::translate('Record saved'));
+            // reload the listing
+        }
+        catch (Exception $e) // in case of exception
+        {
+            // shows the exception error message
+            new TMessage('error', '<b>Error</b> ' . $e->getMessage());
+            
+            // undo all pending operations
+            TTransaction::rollback();
+        }
     }
 }

@@ -1,45 +1,40 @@
 <menu>
     <menuitem label='Start here'>
         <menu>
-            <menuitem label='Welcome'>
-                <menu>
-                    <menuitem label='Welcome page'>
-                        <icon>app/images/ico_wellcome.png</icon>
-                        <action>WelcomeView</action>
-                    </menuitem>
-                </menu>
+            <menuitem label='Welcome page'>
+                <icon>app/images/ico_wellcome.png</icon>
+                <action>WelcomeView</action>
             </menuitem>
         </menu>
     </menuitem>
-    <menuitem label='Cadastros'>
+    <menuitem label='Cadastro'>
         <menu>
             <menuitem label='Cadastros de Negócio'>
                 <menu>
                     <menuitem label='Lote'>
-                        <icon></icon>
                         <action>LoteList</action>
-                    </menuitem>
-                    <menuitem label='Transportadora'>
-                        <icon></icon>
-                        <action>TransportadoraList</action>
                     </menuitem>
                 </menu>
             </menuitem>
-            <menuitem label='Definições de Sistema'>
+            <menuitem label='Definições para Processos'>
                 <menu>
                     <menuitem label='Tipo de Descarte'>
-                        <icon></icon>
                         <action>TipoDescarteList</action>
                     </menuitem>
-                </menu>
-                <menu>  
-                </menu>
-                <menu>
+                    <menuitem label='Transportadora'>
+                        <action>TransportadoraList</action>
+                    </menuitem>
                     <menuitem label='Zona de Atendimento'>
-                        <icon></icon>
                         <action>ZonaAtendimentoList</action>
                     </menuitem>
-                </menu>
+                </menu> 
+            </menuitem>
+        </menu>
+    </menuitem>
+    <menuitem label='Processos'>
+        <menu>
+            <menuitem label='Compra'>
+                <action>CompraList</action>
             </menuitem>
         </menu>
     </menuitem>

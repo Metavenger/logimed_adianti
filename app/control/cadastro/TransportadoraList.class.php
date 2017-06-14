@@ -53,7 +53,7 @@ class TransportadoraList extends TStandardList
 
 
         // add the fields
-        $this->form->addQuickField('Numero', $nome,  300 );
+        $this->form->addQuickField('Nome da Transportadora', $nome,  300 );
         $this->form->addQuickField('Preco', $preco,  85 );
         $this->form->addQuickField('Avaliacao', $avaliacao,  85 );
         $this->form->addQuickField('Zona de Atendimento', $zonaatendimento_id,  150 );
@@ -77,7 +77,7 @@ class TransportadoraList extends TStandardList
 
         // creates the datagrid columns
         $column_id = new TDataGridColumn('id', 'Id', 'right');
-        $column_nome = new TDataGridColumn('nome', 'Numero', 'center');
+        $column_nome = new TDataGridColumn('nome', 'Nome da Transportadora', 'center');
         $column_preco = new TDataGridColumn('preco', 'Preco', 'right');
         $column_avaliacao = new TDataGridColumn('avaliacao', 'Avaliacao', 'center');
         $column_zonaatendimento_id = new TDataGridColumn('zonaatendimento_id', 'Zona de Atendimento', 'left');

@@ -29,7 +29,7 @@ class LoteList extends TStandardList
         //parent::addFilterField('valor', 'like', 'valor'); // filterField, operator, formField
         //parent::addFilterField('temperatura', 'like', 'temperatura'); // filterField, operator, formField
         //parent::addFilterField('tipodescarte_id', '=', 'tipodescarte_id'); // filterField, operator, formField
-        //parent::addFilterField('flag_esgotado', '=', 'flag_esgotado'); // filterField, operator, formField
+        //parent::addFilterField('fl_descarte', '=', 'fl_descarte'); // filterField, operator, formField
         
         // creates the form
         $this->form = new TQuickForm('form_search_Lote');
@@ -44,13 +44,12 @@ class LoteList extends TStandardList
         $peso = new TEntry('peso');
         $valor = new TEntry('valor');
         $temperatura = new TEntry('temperatura');
-        //$tipodescarte_id = new TEntry('tipodescarte_id');
         $tipodescarte_id = new TDBCombo('tipodescarte_id', 'logimed', 'TipoDescarte', 'id', 'descricao', 'grupo');
         $tipodescarte_id->setValue(TSession::getValue('Lote_tipodescarte_id'));
-        //$flag_esgotado = new TEntry('flag_esgotado');
-        $flag_esgotado = new TCombo('flag_esgotado');
-        //$flag_esgotado->setValue(TSession::getValue('flag_esgotado'));
-        $flag_esgotado->addItems(array('S'=>'Sim','N'=>'Não'));
+        $fl_descarte = new TCombo('fl_descarte');
+        $fl_descarte->addItems(array('S'=>'Sim','N'=>'Não'));
+        $dt_descarte = new TDate('dt_descarte');
+        $dt_descarte->setMask('dd/mm/yyyy');
 
 
         // add the fields
@@ -59,7 +58,8 @@ class LoteList extends TStandardList
         $this->form->addQuickField('Valor', $valor,  85 );
         $this->form->addQuickField('Temperatura', $temperatura,  85 );
         $this->form->addQuickField('Tipo de Descarte', $tipodescarte_id,  230 );
-        $this->form->addQuickField('Esgotado?', $flag_esgotado,  85 );
+        $this->form->addQuickField('Descarte?', $fl_descarte,  85 );
+        $this->form->addQuickField('Data de Descarte', $dt_descarte, 100);
 
         
         // keep the form filled during navigation with session data
@@ -84,7 +84,16 @@ class LoteList extends TStandardList
         $column_valor = new TDataGridColumn('valor', 'Valor', 'right');
         $column_temperatura = new TDataGridColumn('temperatura', 'Temperatura', 'right');
         $column_tipodescarte_id = new TDataGridColumn('tipodescarte_id', 'Tipo de Descarte', 'left');
-        $column_flag_esgotado = new TDataGridColumn('flag_esgotado', 'Esgotado?', 'center');
+        $column_fl_descarte = new TDataGridColumn('fl_descarte', 'Descarte?', 'center');
+        $column_estoque_atual = new TDataGridColumn('estoque_atual', 'Estoque Atual', 'center');
+        $column_total_estoque = new TDataGridColumn('total_estoque', 'Total em Estoque', 'center');
+        $column_dt_descarte = new TDataGridColumn('dt_descarte', 'Data de Descarte', 'center');
+        $column_dt_descarte->setTransformer(function($value, $object, $row) {
+            if($value)
+            {
+                return TDate::date2br($value);
+            }
+        });
 
 
         // add the columns to the DataGrid
@@ -94,7 +103,11 @@ class LoteList extends TStandardList
         $this->datagrid->addColumn($column_valor);
         $this->datagrid->addColumn($column_temperatura);
         $this->datagrid->addColumn($column_tipodescarte_id);
-        $this->datagrid->addColumn($column_flag_esgotado);
+        $this->datagrid->addColumn($column_fl_descarte);
+        $this->datagrid->addColumn($column_estoque_atual);
+        $this->datagrid->addColumn($column_total_estoque);
+        $this->datagrid->addColumn($column_dt_descarte);
+        
 
 
         // creates the datagrid column actions
@@ -122,9 +135,17 @@ class LoteList extends TStandardList
         $order_tipodescarte_id->setParameter('order', 'tipodescarte_id');
         $column_tipodescarte_id->setAction($order_tipodescarte_id);
         
-        $order_flag_esgotado = new TAction(array($this, 'onReload'));
-        $order_flag_esgotado->setParameter('order', 'flag_esgotado');
-        $column_flag_esgotado->setAction($order_flag_esgotado);
+        $order_estoque_atual = new TAction(array($this, 'onReload'));
+        $order_estoque_atual->setParameter('order', 'estoque_atual');
+        $column_estoque_atual->setAction($order_estoque_atual);
+        
+        $order_total_estoque = new TAction(array($this, 'onReload'));
+        $order_total_estoque->setParameter('order', 'total_estoque');
+        $column_total_estoque->setAction($order_total_estoque);
+        
+        $order_dt_descarte = new TAction(array($this, 'onReload'));
+        $order_dt_descarte->setParameter('order', 'dt_descarte');
+        $column_dt_descarte->setAction($order_dt_descarte);
         
 
         // define the transformer method over image
@@ -222,10 +243,15 @@ class LoteList extends TStandardList
                 // add the filter stored in the session to the criteria
                 $criteria->add(TSession::getValue('Lote_filter_tipodescarte_id'));
             }
-            if (TSession::getValue('Lote_filter_flag_esgotado'))
+            if (TSession::getValue('Lote_filter_fl_descarte'))
             {
                 // add the filter stored in the session to the criteria
-                $criteria->add(TSession::getValue('Lote_filter_flag_esgotado'));
+                $criteria->add(TSession::getValue('Lote_filter_fl_descarte'));
+            }
+            if (TSession::getValue('Lote_filter_dt_descarte'))
+            {
+                // add the filter stored in the session to the criteria
+                $criteria->add(TSession::getValue('Lote_filter_dt_descarte'));
             }
             
             // load the objects according to criteria
@@ -239,13 +265,13 @@ class LoteList extends TStandardList
                 {
                     $tipo_descarte = new TipoDescarte($object->tipodescarte_id);
                     $object->tipodescarte_id = $tipo_descarte-> grupo . ' - ' . $tipo_descarte->descricao;
-                    if($object->flag_esgotado == 'S')
+                    if($object->fl_descarte == 'S')
                     {
-                        $object->flag_esgotado = 'Sim';
+                        $object->fl_descarte = 'Sim';
                     }
-                    else if($object->flag_esgotado == 'N')
+                    else if($object->fl_descarte == 'N')
                     {
-                        $object->flag_esgotado = 'Não';
+                        $object->fl_descarte = 'Não';
                     }
                     // add the object inside the datagrid
                     $this->datagrid->addItem($object);
@@ -289,8 +315,10 @@ class LoteList extends TStandardList
         TSession::setValue('Lote_temperatura', '');
         TSession::setValue('Lote_filter_tipodescarte_id',   NULL);
         TSession::setValue('Lote_tipodescarte_id', '');
-        TSession::setValue('Lote_filter_flag_esgotado', NULL);
-        TSession::setValue('Lote_flag_esgotado', '');
+        TSession::setValue('Lote_filter_fl_descarte', NULL);
+        TSession::setValue('Lote_fl_descarte', '');
+        TSession::setValue('Lote_filter_dt_descarte', NULL);
+        TSession::setValue('Lote_dt_descarte', '');
         
         // check if the user has filled the form
         if ($data->numero)
@@ -332,12 +360,19 @@ class LoteList extends TStandardList
             TSession::setValue('Lote_filter_tipodescarte_id',$filter);
             TSession::setValue('Lote_tipodescarte_id',$data->tipodescarte_id);
         }
-        if($data->flag_esgotado)
+        if($data->fl_descarte)
         {
-            $filter = new TFilter('flag_esgotado', '=', $data->flag_esgotado);
+            $filter = new TFilter('fl_descarte', '=', $data->fl_descarte);
             
-            TSession::setValue('Lote_filter_flag_esgotado',   $filter);
-            TSession::setValue('Lote_flag_esgotado', $data->flag_esgotado);
+            TSession::setValue('Lote_filter_fl_descarte',   $filter);
+            TSession::setValue('Lote_fl_descarte', $data->fl_descarte);
+        }
+        if($data->dt_descarte)
+        {
+            $filter = new TFilter('dt_descarte', '=', TDate::date2us($data->dt_descarte));
+            
+            TSession::setValue('Lote_filter_dt_descarte',   $filter);
+            TSession::setValue('Lote_dt_descarte', $data->dt_descarte);
         }
         
         // fill the form with data again
