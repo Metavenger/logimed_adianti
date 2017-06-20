@@ -23,6 +23,7 @@ class Compra extends TRecord
         parent::addAttribute('valor');
         parent::addAttribute('fl_ativo');
         parent::addAttribute('nome_cliente');
+        parent::addAttribute('endereco');
     }
 
     

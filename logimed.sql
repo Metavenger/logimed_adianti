@@ -29,10 +29,11 @@ CREATE TABLE `compra` (
   `valor` double NOT NULL,
   `fl_ativo` varchar(1) NOT NULL,
   `nome_cliente` varchar(50) NOT NULL,
+  `endereco` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `lote_id` (`lote_id`),
   CONSTRAINT `compra_ibfk_1` FOREIGN KEY (`lote_id`) REFERENCES `lote` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +42,7 @@ CREATE TABLE `compra` (
 
 LOCK TABLES `compra` WRITE;
 /*!40000 ALTER TABLE `compra` DISABLE KEYS */;
-INSERT INTO `compra` VALUES (1,1,9,68553,'S','Luiz Armando'),(2,1,1,7617,'S','Porra'),(3,1,1,7617,'S','fgnfgfgn');
+INSERT INTO `compra` VALUES (12,1,7,53319,'S','luiz','teste'),(13,6,25,234825,'S','mateus','aqui e ali'),(14,9,12,49920,'S','miguel falabella','largo do arouche');
 /*!40000 ALTER TABLE `compra` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -57,12 +58,10 @@ CREATE TABLE `entrega` (
   `transportadora_id` int(8) NOT NULL,
   `dt_confirmacao` date DEFAULT NULL,
   `fl_ativo` varchar(1) DEFAULT NULL,
-  `endereco` varchar(50) DEFAULT NULL,
-  `cliente` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `transportadora_id` (`transportadora_id`),
   CONSTRAINT `entrega_ibfk_1` FOREIGN KEY (`transportadora_id`) REFERENCES `transportadora` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,6 +70,7 @@ CREATE TABLE `entrega` (
 
 LOCK TABLES `entrega` WRITE;
 /*!40000 ALTER TABLE `entrega` DISABLE KEYS */;
+INSERT INTO `entrega` VALUES (3,6,NULL,'S');
 /*!40000 ALTER TABLE `entrega` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,7 +90,7 @@ CREATE TABLE `entrega_compra` (
   KEY `compra_id` (`compra_id`),
   CONSTRAINT `entrega_compra_ibfk_1` FOREIGN KEY (`entrega_id`) REFERENCES `entrega` (`id`),
   CONSTRAINT `entrega_compra_ibfk_2` FOREIGN KEY (`compra_id`) REFERENCES `compra` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -99,6 +99,7 @@ CREATE TABLE `entrega_compra` (
 
 LOCK TABLES `entrega_compra` WRITE;
 /*!40000 ALTER TABLE `entrega_compra` DISABLE KEYS */;
+INSERT INTO `entrega_compra` VALUES (6,3,13);
 /*!40000 ALTER TABLE `entrega_compra` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -120,12 +121,12 @@ CREATE TABLE `lote` (
   `estoque_atual` int(8) DEFAULT NULL,
   `total_estoque` int(8) DEFAULT NULL,
   `dt_descarte` date DEFAULT NULL,
-  `nome` varchar(100) NOT NULL,
+  `nome` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `numero` (`numero`),
   KEY `tipodescarte_id` (`tipodescarte_id`),
   CONSTRAINT `lote_ibfk_1` FOREIGN KEY (`tipodescarte_id`) REFERENCES `tipo_descarte` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -134,7 +135,7 @@ CREATE TABLE `lote` (
 
 LOCK TABLES `lote` WRITE;
 /*!40000 ALTER TABLE `lote` DISABLE KEYS */;
-INSERT INTO `lote` VALUES (1,308,412,'7617',62,1,'N',7,50,NULL,'dsdsd'),(2,2,412,'7617',62,2,'N',2,50,NULL,''),(3,980,599,'7698',2,3,'S',90,90,NULL,''),(4,397,948,'2019',32,4,'S',45,45,NULL,''),(5,227,157,'2326',92,5,'S',89,89,NULL,''),(6,817,357,'9393',9,1,'S',347,347,NULL,''),(7,415,736,'5020',91,2,'S',134,134,NULL,''),(8,384,432,'1675',57,3,'S',675,675,NULL,''),(9,694,758,'4160',45,4,'N',234,234,NULL,''),(10,302,523,'8642',39,5,'S',45,45,NULL,''),(11,348,255,'690',35,1,'S',857,857,NULL,''),(12,157,866,'5934',14,2,'N',132,132,NULL,''),(13,723,798,'8330',20,3,'S',23,23,NULL,''),(14,93,718,'2362',94,4,'S',78,78,NULL,''),(15,774,237,'318',-14,5,'S',35,35,NULL,''),(16,526,758,'103',1,1,'N',23,23,NULL,''),(17,655,442,'2322',-17,2,'S',89,89,NULL,''),(18,972,143,'8931',44,3,'S',213,213,NULL,''),(19,40,440,'8341',-22,4,'N',32,32,NULL,''),(20,486,891,'7537',89,5,'S',54,54,NULL,''),(21,857,782,'8955',-4,1,'S',34,34,NULL,''),(22,465,534,'7917',-12,2,'S',13,13,NULL,''),(23,445,189,'1048',23,3,'N',123,123,NULL,''),(24,534,210,'7553',-2,4,'S',89,89,NULL,''),(25,418,905,'397',30,5,'S',89,89,NULL,'');
+INSERT INTO `lote` VALUES (1,308,412,'7617',62,1,'N',43,50,NULL,'aaa'),(2,2,412,'7617',62,2,'N',50,50,NULL,'bbb'),(3,980,599,'7698',2,3,'N',90,90,NULL,'ccc'),(4,397,948,'2019',32,4,'N',45,45,NULL,'ddd'),(5,227,157,'2326',92,5,'S',88,89,NULL,'eee'),(6,817,357,'9393',9,1,'S',322,347,NULL,'fff'),(7,415,736,'5020',91,2,'S',134,134,NULL,'ggg'),(8,384,432,'1675',57,3,'S',675,675,NULL,'hhh'),(9,694,758,'4160',45,4,'N',222,234,NULL,'iii'),(10,302,523,'8642',39,5,'S',45,45,NULL,'jjj'),(11,348,255,'690',35,1,'S',857,857,NULL,'kkk'),(12,157,866,'5934',14,2,'N',132,132,NULL,'lll'),(13,723,798,'8330',20,3,'S',23,23,NULL,'mmm'),(14,93,718,'2362',94,4,'S',78,78,NULL,'nnn'),(15,774,237,'318',-14,5,'S',35,35,NULL,'ooo'),(16,526,758,'103',1,1,'N',23,23,NULL,'ppp'),(17,655,442,'2322',-17,2,'S',89,89,NULL,'qqq'),(18,972,143,'8931',44,3,'S',213,213,NULL,'rrr'),(19,40,440,'8341',-22,4,'N',32,32,NULL,'sss'),(20,486,891,'7537',89,5,'S',54,54,NULL,'ttt'),(21,857,782,'8955',-4,1,'S',34,34,NULL,'uuu'),(22,465,534,'7917',-12,2,'S',13,13,NULL,'vvv'),(23,445,189,'1048',23,3,'N',123,123,NULL,'www'),(24,534,210,'7553',-2,4,'S',89,89,NULL,'xxx'),(25,418,905,'397',30,5,'S',89,89,NULL,'yyy'),(32,13133,22,'34.09',23,2,'S',23,23,NULL,NULL),(33,656,3,'45.22',45,2,'S',766,766,NULL,NULL);
 /*!40000 ALTER TABLE `lote` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -226,4 +227,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-06-05 15:01:17
+-- Dump completed on 2017-06-20 15:59:18

@@ -22,20 +22,11 @@ class TransportadoraList extends TStandardList
         parent::setDatabase('logimed');            // defines the database
         parent::setActiveRecord('Transportadora');   // defines the active record
         parent::setDefaultOrder('id', 'asc');         // defines the default order
-        // parent::setCriteria($criteria) // define a standard filter
-
-        //parent::addFilterField('nome', 'like', 'nome'); // filterField, operator, formField
-        //parent::addFilterField('preco', 'like', 'preco'); // filterField, operator, formField
-        //parent::addFilterField('avaliacao', 'like', 'avaliacao'); // filterField, operator, formField
-        //parent::addFilterField('temperatura', 'like', 'temperatura'); // filterField, operator, formField
-        //parent::addFilterField('zonaatendimento_id', '=', 'zonaatendimento_id'); // filterField, operator, formField
-        //parent::addFilterField('habilitado', '=', 'habilitado'); // filterField, operator, formField
         
         // creates the form
         $this->form = new TQuickForm('form_search_Transportadora');
         $this->form->class = 'tform'; // change CSS class
         
-        //$this->form->style = 'display: table;width:100%'; // change style
         $this->form->setFormTitle('Transportadora');
         
 
@@ -43,12 +34,9 @@ class TransportadoraList extends TStandardList
         $nome = new TEntry('nome');
         $preco = new TEntry('preco');
         $avaliacao = new TEntry('avaliacao');
-        //$zonaatendimento_id = new TEntry('zonaatendimento_id');
         $zonaatendimento_id = new TDBCombo('zonaatendimento_id', 'logimed', 'ZonaAtendimento', 'id', 'descricao', 'descricao');
         $zonaatendimento_id->setValue(TSession::getValue('Transportadora_zonaatendimento_id'));
-        //$habilitado = new TEntry('habilitado');
         $habilitado = new TCombo('habilitado');
-        //$habilitado->setValue(TSession::getValue('habilitado'));
         $habilitado->addItems(array('S'=>'Sim','N'=>'Não'));
 
 
@@ -72,7 +60,6 @@ class TransportadoraList extends TStandardList
         
         //$this->datagrid->style = 'width: 100%';
         $this->datagrid->datatable = 'true';
-        // $this->datagrid->enablePopover('Popover', 'Hi <b> {name} </b>');
         
 
         // creates the datagrid columns
@@ -128,18 +115,16 @@ class TransportadoraList extends TStandardList
         
         // create EDIT action
         $action_edit = new TDataGridAction(array('TransportadoraForm', 'onEdit'));
-        //$action_edit->setUseButton(TRUE);
         $action_edit->setButtonClass('btn btn-default');
-        //$action_edit->setLabel(_t('Edit'));
+        $action_edit->setLabel(_t('Edit'));
         $action_edit->setImage('ico_edit.png');
         $action_edit->setField('id');
         $this->datagrid->addAction($action_edit);
         
         // create DELETE action
         $action_del = new TDataGridAction(array($this, 'onDelete'));
-        //$action_del->setUseButton(TRUE);
         $action_del->setButtonClass('btn btn-default');
-        //$action_del->setLabel(_t('Delete'));
+        $action_del->setLabel(_t('Delete'));
         $action_del->setImage('ico_delete.png');
         $action_del->setField('id');
         $this->datagrid->addAction($action_del);

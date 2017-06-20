@@ -22,14 +22,6 @@ class CompraList extends TStandardList
         parent::setDatabase('logimed');            // defines the database
         parent::setActiveRecord('Compra');   // defines the active record
         parent::setDefaultOrder('id', 'asc');         // defines the default order
-        // parent::setCriteria($criteria) // define a standard filter
-
-        //parent::addFilterField('id', 'like', 'id'); // filterField, operator, formField
-        //parent::addFilterField('lote_id', 'like', 'lote_id'); // filterField, operator, formField
-        //parent::addFilterField('unidades', 'like', 'unidades'); // filterField, operator, formField
-        //parent::addFilterField('valor', 'like', 'valor'); // filterField, operator, formField
-        //parent::addFilterField('fl_ativo', 'like', 'fl_ativo'); // filterField, operator, formField
-        //parent::addFilterField('nome_cliente', 'like', 'nome_cliente'); // filterField, operator, formField
         
         // creates the form
         $this->form = new TQuickForm('form_search_Compra');
@@ -41,16 +33,17 @@ class CompraList extends TStandardList
 
         // create the form fields
         $lote_numero = new TEntry('lote_numero');
-        //$fl_ativo = new TEntry('fl_ativo');
         $fl_ativo = new TCombo('fl_ativo');
         $fl_ativo->addItems(array('S'=>'Sim','N'=>'Não'));
         $nome_cliente = new TEntry('nome_cliente');
+        $endereco = new TEntry('endereco');
 
 
         // add the fields
         $this->form->addQuickField('Nº Lote', $lote_numero,  200 );
         $this->form->addQuickField('Ativa?', $fl_ativo,  200 );
         $this->form->addQuickField('Nome do Cliente', $nome_cliente,  200 );
+        $this->form->addQuickField('Endereço', $endereco, 200);
 
         
         // keep the form filled during navigation with session data
@@ -65,12 +58,12 @@ class CompraList extends TStandardList
         
         //$this->datagrid->style = 'width: 100%';
         $this->datagrid->datatable = 'true';
-        // $this->datagrid->enablePopover('Popover', 'Hi <b> {name} </b>');
         
 
         // creates the datagrid columns
         $column_id = new TDataGridColumn('id', 'Id', 'right');
         $column_nome_cliente = new TDataGridColumn('nome_cliente', 'Nome do Cliente', 'left');
+        $column_endereco = new TDataGridColumn('endereco', 'Endereço', 'left');
         $column_lote_numero = new TDataGridColumn('lote_numero', 'Nº Lote', 'right');
         $column_lote_nome = new TDataGridColumn('lote_nome', 'Nome do Produto', 'center');
         $column_unidades = new TDataGridColumn('unidades', 'Unidades', 'right');
@@ -81,6 +74,7 @@ class CompraList extends TStandardList
         // add the columns to the DataGrid
         $this->datagrid->addColumn($column_id);
         $this->datagrid->addColumn($column_nome_cliente);
+        $this->datagrid->addColumn($column_endereco);
         $this->datagrid->addColumn($column_lote_numero);
         $this->datagrid->addColumn($column_lote_nome);
         $this->datagrid->addColumn($column_unidades);
@@ -112,18 +106,16 @@ class CompraList extends TStandardList
         
         // create EDIT action
         $action_edit = new TDataGridAction(array('CompraForm', 'onEdit'));
-        //$action_edit->setUseButton(TRUE);
+        $action_edit->setLabel(_t('Edit'));
         $action_edit->setButtonClass('btn btn-default');
-        //$action_edit->setLabel(_t('Edit'));
         $action_edit->setImage('ico_edit.png');
         $action_edit->setField('id');
         $this->datagrid->addAction($action_edit);
         
         // create DELETE action
         $action_del = new TDataGridAction(array($this, 'onDelete'));
-        //$action_del->setUseButton(TRUE);
+        $action_del->setLabel(_t('Delete'));
         $action_del->setButtonClass('btn btn-default');
-        //$action_del->setLabel(_t('Delete'));
         $action_del->setImage('ico_delete.png');
         $action_del->setField('id');
         $this->datagrid->addAction($action_del);
@@ -141,7 +133,7 @@ class CompraList extends TStandardList
         // vertical box container
         $container = new TVBox;
         //$container->style = 'width: 90%';
-        // $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
+        $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add($this->form);
         $container->add($this->datagrid);
         $container->add($this->pageNavigation);
@@ -240,6 +232,8 @@ class CompraList extends TStandardList
         TSession::setValue('Compra_fl_ativo', '');
         TSession::setValue('Compra_filter_nome_cliente',   NULL);
         TSession::setValue('Compra_nome_cliente', '');
+        TSession::setValue('Compra_filter_endereco',   NULL);
+        TSession::setValue('Compra_endereco', '');
         
         // check if the user has filled the form
         if ($data->lote_numero)
@@ -266,6 +260,15 @@ class CompraList extends TStandardList
             // stores the filter in the session
             TSession::setValue('Compra_filter_nome_cliente',   $filter);
             TSession::setValue('Compra_nome_cliente', $data->nome_cliente);
+        }
+        if ($data->endereco)
+        {
+            // creates a filter using what the user has typed
+            $filter = new TFilter('endereco', '=', "%{$data->endereco}%");
+            
+            // stores the filter in the session
+            TSession::setValue('Compra_filter_endereco',   $filter);
+            TSession::setValue('Compra_endereco', $data->endereco);
         }
         
         // fill the form with data again

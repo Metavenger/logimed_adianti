@@ -33,7 +33,6 @@ class TransportadoraSeek extends TWindow
         $this->setDatabase('logimed');            // defines the database
         $this->setActiveRecord('Transportadora');   // defines the active record
         $this->setDefaultOrder('id', 'asc');         // defines the default order
-        // parent::setCriteria($criteria) // define a standard filter
 
         $this->addFilterField('nome', 'like', 'nome'); // filterField, operator, formField
         $this->addFilterField('zonaatendimento_id', '=', 'zonatendimento_id'); // filterField, operator, formField
@@ -67,8 +66,6 @@ class TransportadoraSeek extends TWindow
         
         $this->datagrid->style = 'width: 100%';
         $this->datagrid->setHeight(320);
-        // $this->datagrid->datatable = 'true';
-        // $this->datagrid->enablePopover('Popover', 'Hi <b> {name} </b>');
         
 
         // creates the datagrid columns
@@ -89,7 +86,6 @@ class TransportadoraSeek extends TWindow
         
         // create EDIT action
         $action_select = new TDataGridAction(array($this, 'onSelect'));
-        //$action_select->setUseButton(TRUE);
         $action_select->setButtonClass('btn btn-default');
         $action_select->setLabel(AdiantiCoreTranslator::translate('Select'));
         $action_select->setImage('ico_apply.png');
@@ -143,6 +139,8 @@ class TransportadoraSeek extends TWindow
                 // add the filter stored in the session to the criteria
                 $criteria->add(TSession::getValue('zonaatendimento_id_filter'));
             }
+            
+            $criteria->add(new TFilter('habilitado', '!=', 'N'));
             
             // load the objects according to criteria
             $objects = $repository->load($criteria,false);

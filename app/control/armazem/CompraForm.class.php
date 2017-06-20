@@ -31,10 +31,8 @@ class CompraForm extends TPage
         
         // create the form fields
         $id = new TEntry('id');
-        //$lote_id = new TEntry('lote_id');
-        //$lote_id = new TDBCombo('lote_id', 'logimed', 'Lote', 'id', 'numero', 'numero');
         $nome_cliente = new TEntry('nome_cliente');
-        //$lote_id = new TDBSeekButton('lote_id', 'logimed', $this->form->getName(), 'Lote', 'numero', 'lote_id', 'lote_numero');
+        $endereco = new TEntry('endereco');
         $lote_numero = new TSeekButton('numero');
         $lote_nome  = new TEntry('nome_produto');
         $unidades = new TEntry('unidades');
@@ -62,6 +60,7 @@ class CompraForm extends TPage
         // add the fields
         $this->form->addQuickField('Id', $id,  100 );
         $this->form->addQuickField('Cliente', $nome_cliente,  250, new TRequiredValidator );
+        $this->form->addQuickField('Endereço', $endereco, 250, new TRequiredValidator);
         $this->form->addQuickFields('Lote', array($lote_numero, $lote_nome), new TRequiredValidator);
         $this->form->addQuickField('Unidades', $unidades,  100 );
 
@@ -69,12 +68,6 @@ class CompraForm extends TPage
         {
             $id->setEditable(FALSE);
         }
-        
-        /** samples
-         $this->form->addQuickFields('Date', array($date1, new TLabel('to'), $date2)); // side by side fields
-         $fieldX->addValidation( 'Field X', new TRequiredValidator ); // add validation
-         $fieldX->setSize( 100, 40 ); // set size
-         **/
          
         // create the form actions
         $this->form->addQuickAction(_t('Save'), new TAction(array($this, 'onSave')), 'ico_save.png');
@@ -83,8 +76,8 @@ class CompraForm extends TPage
         
         // vertical box container
         $container = new TVBox;
-        $container->style = 'width: 30%';
-        // $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
+        //$container->style = 'width: 50%';
+        $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add($this->form);
         
         parent::add($container);
@@ -102,37 +95,45 @@ class CompraForm extends TPage
             // form validation
             $this->form->validate();
             
-            if(isset($object->id))
+            if(isset($object->id) and $object->id)
             {
                 $compra = new Compra($object->id);
-            }
-            else
-            {
-                $compra = new Compra();
-            }
-            $compra->fl_ativo = 'S';
-            $compra->nome_cliente = utf8_encode($object->nome_cliente);
-            
-            $lote = Lote::newFromNumero($object->numero);
-            
-            $compra->lote_id = $lote->id;
-
-            if($lote->estoque_atual < $object->unidades)
-            {
-                throw new Exception('Estoque insuficiente para o lote solicitado.');
-            }
-            else
-            {
-                if(isset($object->id))
+                
+                $compra->nome_cliente = $object->nome_cliente;
+                $compra->endereco = $object->endereco;
+                
+                $lote = Lote::newFromNumero($object->numero);
+                if($compra->lote_id != $lote->id)
+                {
+                    $lote_restore = new Lote($compra->lote_id);
+                    $lote_restore->estoque_atual += $compra->unidades;
+                    $lote_restore->store();
+                    $old_unidades = 0;
+                }
+                else
                 {
                     $old_unidades = $compra->unidades;
-                    if($old_unidades != $object->unidades)
+                }
+                                
+                $compra->lote_id = $lote->id;
+                
+                if($old_unidades > $object->unidades)
+                {
+                    $lote->estoque_atual += ($old_unidades - $object->unidades);
+                }
+                else if($old_unidades < $object->unidades)
+                {
+                    if($lote->estoque_atual < ($object->unidades - $old_unidades))
                     {
-                        $lote->estoque_atual += ($old_unidades - $object->unidades);
+                        throw new Exception('Estoque insuficiente para o lote solicitado.');
+                    }
+                    else
+                    {
+                        $lote->estoque_atual -= ($object->unidades - $old_unidades);
                     }
                 }
+                    
                 $compra->unidades = $object->unidades;
-                $lote->estoque_atual -= $object->unidades;
                 if(($lote->total_estoque * 0.2) > $lote->estoque_atual)
                 {
                     $msg = true;
@@ -141,7 +142,38 @@ class CompraForm extends TPage
                 $compra->valor = $lote->valor * $object->unidades;
                 $lote->store();
                 $compra->store();
-            } 
+            }
+            else
+            {               
+                $compra = new Compra();
+                $compra->nome_cliente = utf8_encode($object->nome_cliente);
+                $compra->endereco = utf8_encode($object->endereco);
+                
+                $lote = Lote::newFromNumero($object->numero);
+            
+                $compra->lote_id = $lote->id;
+    
+                if($lote->estoque_atual < $object->unidades)
+                {
+                    throw new Exception('Estoque insuficiente para o lote solicitado.');
+                }
+                else
+                {
+                    $lote->estoque_atual -= $object->unidades;
+                    $compra->unidades = $object->unidades;
+                    if(($lote->total_estoque * 0.2) > $lote->estoque_atual)
+                    {
+                        $msg = true; 
+                    }
+                    $compra->valor = $lote->valor * $object->unidades;
+                    $compra->fl_ativo = 'S';
+                    $lote->store();
+                    $compra->store();
+                } 
+            }
+            
+            
+            
             
             $action = new TAction(array('CompraList', 'onReload'));
             new TMessage('info', 'Compra registrada com sucesso.', $action);

@@ -1,40 +1,46 @@
 <menu>
-    <menuitem label='Start here'>
+    <menuitem label='Controlador de Estoque'>
         <menu>
-            <menuitem label='Welcome page'>
-                <icon>app/images/ico_wellcome.png</icon>
-                <action>WelcomeView</action>
+            <menuitem label='Cancelar Descarte de Lote'>
+                <action>CancelarLoteDescarte</action>
             </menuitem>
         </menu>
     </menuitem>
-    <menuitem label='Cadastro'>
+    <menuitem label='Operador de Armazém'>
         <menu>
-            <menuitem label='Cadastros de Negócio'>
+            <menuitem label='Cadastro'>
                 <menu>
-                    <menuitem label='Lote'>
-                        <action>LoteList</action>
+                    <menuitem label='Cadastros de Negócio'>
+                        <menu>
+                            <menuitem label='Lotes'>
+                                <action>LoteList</action>
+                            </menuitem>
+                            <menuitem label='Transportadoras'>
+                                <action>TransportadoraList</action>
+                            </menuitem>
+                        </menu>
+                    </menuitem>
+                    <menuitem label='Definições para Processos'>
+                        <menu>
+                            <menuitem label='Tipos de Descarte'>
+                                <action>TipoDescarteList</action>
+                            </menuitem>
+                            <menuitem label='Zonas de Atendimento'>
+                                <action>ZonaAtendimentoList</action>
+                            </menuitem>
+                        </menu> 
                     </menuitem>
                 </menu>
             </menuitem>
-            <menuitem label='Definições para Processos'>
+            <menuitem label='Processos'>
                 <menu>
-                    <menuitem label='Tipo de Descarte'>
-                        <action>TipoDescarteList</action>
+                    <menuitem label='Compras'>
+                        <action>CompraList</action>
                     </menuitem>
-                    <menuitem label='Transportadora'>
-                        <action>TransportadoraList</action>
+                    <menuitem label='Entregas'>
+                        <action>EntregaList</action>
                     </menuitem>
-                    <menuitem label='Zona de Atendimento'>
-                        <action>ZonaAtendimentoList</action>
-                    </menuitem>
-                </menu> 
-            </menuitem>
-        </menu>
-    </menuitem>
-    <menuitem label='Processos'>
-        <menu>
-            <menuitem label='Compra'>
-                <action>CompraList</action>
+                </menu>
             </menuitem>
         </menu>
     </menuitem>

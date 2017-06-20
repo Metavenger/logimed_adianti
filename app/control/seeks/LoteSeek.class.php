@@ -33,7 +33,6 @@ class LoteSeek extends TWindow
         $this->setDatabase('logimed');            // defines the database
         $this->setActiveRecord('Lote');   // defines the active record
         $this->setDefaultOrder('id', 'asc');         // defines the default order
-        // parent::setCriteria($criteria) // define a standard filter
 
         $this->addFilterField('numero', '=', 'numero'); // filterField, operator, formField
         $this->addFilterField('nome', 'like', 'nome'); // filterField, operator, formField
@@ -67,8 +66,6 @@ class LoteSeek extends TWindow
         
         $this->datagrid->style = 'width: 100%';
         $this->datagrid->setHeight(320);
-        // $this->datagrid->datatable = 'true';
-        // $this->datagrid->enablePopover('Popover', 'Hi <b> {name} </b>');
         
 
         // creates the datagrid columns
@@ -82,14 +79,12 @@ class LoteSeek extends TWindow
         // add the columns to the DataGrid
         $this->datagrid->addColumn($column_id);
         $this->datagrid->addColumn($column_numero);
+        $this->datagrid->addColumn($column_nome);
         $this->datagrid->addColumn($column_estoque_atual);
         $this->datagrid->addColumn($column_total_estoque);
-        $this->datagrid->addColumn($column_nome);
-
-        
+                
         // create EDIT action
         $action_select = new TDataGridAction(array($this, 'onSelect'));
-        //$action_select->setUseButton(TRUE);
         $action_select->setButtonClass('btn btn-default');
         $action_select->setLabel(AdiantiCoreTranslator::translate('Select'));
         $action_select->setImage('ico_apply.png');
@@ -189,5 +184,69 @@ class LoteSeek extends TWindow
         $this->form->clear();
                 
         $this->onReload();
+    }
+    
+    public function onReload($param = NULL)
+    {
+        try
+        {
+            $model    = TSession::getValue('loteseek_model');
+            $database = TSession::getValue('loteseek_database');
+            
+            // begins the transaction with database
+            TTransaction::open($database);
+            
+            $repos = new TRepository('Lote');
+            
+            // creates a repository for the model
+            $limit = 10;
+            
+            // creates a criteria
+            $criteria = new TCriteria;
+            $criteria->setProperties($param); // order, offset
+            $criteria->setProperty('limit', $limit);
+            
+            if (TSession::getValue('loteseek_filter_numero'))          
+                $criteria->add(TSession::getValue('loteseek_filter_numero'));
+            
+            if (TSession::getValue('loteseek_filter_nome'))          
+                $criteria->add(TSession::getValue('loteseek_filter_nome'));
+            
+            $criteria->add(new TFilter('estoque_atual','>',0));
+            
+            $criteria->add(new TFilter('fl_descarte', '!=', 'N'));
+            // load all objects according with the criteria
+            $objects = $repos->load($criteria);
+            
+            $this->datagrid->clear();
+            
+            if ($objects)
+            {
+                foreach ($objects as $object)
+                {
+                    $this->datagrid->addItem($object);
+                }
+            }
+            
+            // clear the crieteria to count the records
+            $criteria->resetProperties();
+            
+            $count = $repos->count($criteria);
+                      
+            $this->pageNavigation->setCount($count); // count of records
+            $this->pageNavigation->setProperties($param); // order, page
+            $this->pageNavigation->setLimit($limit); // limit
+            
+            // closes the transaction
+            TTransaction::close();
+            $this->loaded = true;
+        }
+        catch (Exception $e) // in case of exception
+        {
+            // shows the exception genearated message
+            new TMessage('error', '<b>Erro</b> ' . $e->getMessage());
+            // rollback all the database operations 
+            TTransaction::rollback();
+        }
     }
 }

@@ -22,20 +22,11 @@ class LoteList extends TStandardList
         parent::setDatabase('logimed');            // defines the database
         parent::setActiveRecord('Lote');   // defines the active record
         parent::setDefaultOrder('id', 'asc');         // defines the default order
-        // parent::setCriteria($criteria) // define a standard filter
-
-        //parent::addFilterField('numero', 'like', 'numero'); // filterField, operator, formField
-        //parent::addFilterField('peso', 'like', 'peso'); // filterField, operator, formField
-        //parent::addFilterField('valor', 'like', 'valor'); // filterField, operator, formField
-        //parent::addFilterField('temperatura', 'like', 'temperatura'); // filterField, operator, formField
-        //parent::addFilterField('tipodescarte_id', '=', 'tipodescarte_id'); // filterField, operator, formField
-        //parent::addFilterField('fl_descarte', '=', 'fl_descarte'); // filterField, operator, formField
         
         // creates the form
         $this->form = new TQuickForm('form_search_Lote');
         $this->form->class = 'tform'; // change CSS class
         
-        //$this->form->style = 'display: table;width:100%'; // change style
         $this->form->setFormTitle('Lote');
         
 
@@ -74,7 +65,6 @@ class LoteList extends TStandardList
         
         //$this->datagrid->style = 'width: 100%';
         $this->datagrid->datatable = 'true';
-        // $this->datagrid->enablePopover('Popover', 'Hi <b> {name} </b>');
         
 
         // creates the datagrid columns
@@ -165,18 +155,16 @@ class LoteList extends TStandardList
         
         // create EDIT action
         $action_edit = new TDataGridAction(array('LoteForm', 'onEdit'));
-        //$action_edit->setUseButton(TRUE);
         $action_edit->setButtonClass('btn btn-default');
-        //$action_edit->setLabel(_t('Edit'));
+        $action_edit->setLabel(_t('Edit'));
         $action_edit->setImage('ico_edit.png');
         $action_edit->setField('id');
         $this->datagrid->addAction($action_edit);
         
         // create DELETE action
         $action_del = new TDataGridAction(array($this, 'onDelete'));
-        //$action_del->setUseButton(TRUE);
         $action_del->setButtonClass('btn btn-default');
-        //$action_del->setLabel(_t('Delete'));
+        $action_del->setLabel(_t('Delete'));
         $action_del->setImage('ico_delete.png');
         $action_del->setField('id');
         $this->datagrid->addAction($action_del);

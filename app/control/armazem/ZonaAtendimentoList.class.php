@@ -22,7 +22,6 @@ class ZonaAtendimentoList extends TStandardList
         parent::setDatabase('logimed');            // defines the database
         parent::setActiveRecord('ZonaAtendimento');   // defines the active record
         parent::setDefaultOrder('id', 'asc');         // defines the default order
-        // parent::setCriteria($criteria) // define a standard filter
 
         parent::addFilterField('descricao', 'like', 'descricao'); // filterField, operator, formField
         
@@ -30,7 +29,6 @@ class ZonaAtendimentoList extends TStandardList
         $this->form = new TQuickForm('form_search_ZonaAtendimento');
         $this->form->class = 'tform'; // change CSS class
         
-        //$this->form->style = 'display: table;width:40%'; // change style
         $this->form->setFormTitle('Zona de Atendimento');
         
 
@@ -54,7 +52,6 @@ class ZonaAtendimentoList extends TStandardList
         
         //$this->datagrid->style = 'width: 100%';
         $this->datagrid->datatable = 'true';
-        // $this->datagrid->enablePopover('Popover', 'Hi <b> {name} </b>');
         
 
         // creates the datagrid columns
@@ -80,18 +77,16 @@ class ZonaAtendimentoList extends TStandardList
         
         // create EDIT action
         $action_edit = new TDataGridAction(array('ZonaAtendimentoForm', 'onEdit'));
-        //$action_edit->setUseButton(TRUE);
         $action_edit->setButtonClass('btn btn-default');
-        //$action_edit->setLabel(_t('Edit'));
+        $action_edit->setLabel(_t('Edit'));
         $action_edit->setImage('ico_edit.png');
         $action_edit->setField('id');
         $this->datagrid->addAction($action_edit);
         
         // create DELETE action
         $action_del = new TDataGridAction(array($this, 'onDelete'));
-        //$action_del->setUseButton(TRUE);
         $action_del->setButtonClass('btn btn-default');
-        //$action_del->setLabel(_t('Delete'));
+        $action_del->setLabel(_t('Delete'));
         $action_del->setImage('ico_delete.png');
         $action_del->setField('id');
         $this->datagrid->addAction($action_del);
