@@ -74,6 +74,23 @@ class LoteSeek extends TWindow
         $column_estoque_atual = new TDataGridColumn('estoque_atual', 'Estoque Atual', 'right');
         $column_total_estoque = new TDataGridColumn('total_estoque', 'Total Estoque', 'right');
         $column_nome = new TDataGridColumn('nome', 'Nome', 'left');
+        $column_fl_descarte = new TDataGridColumn('fl_descarte', 'Descarte?', 'center');
+        $column_dt_descarte = new TDataGridColumn('dt_descarte', 'Data de Descarte', 'center');
+        
+        $column_fl_descarte->setTransformer(function($value, $object, $row) {
+            if($value == 'S')
+            {
+                return 'Sim';
+            }
+            else if($value == 'N')
+            {
+                return 'Não';
+            }
+        });
+        
+        $column_dt_descarte->setTransformer(function($value, $object, $row) {
+            return TDate::date2br($value);
+        });
 
 
         // add the columns to the DataGrid
@@ -82,6 +99,8 @@ class LoteSeek extends TWindow
         $this->datagrid->addColumn($column_nome);
         $this->datagrid->addColumn($column_estoque_atual);
         $this->datagrid->addColumn($column_total_estoque);
+        $this->datagrid->addColumn($column_fl_descarte);
+        $this->datagrid->addColumn($column_dt_descarte);
                 
         // create EDIT action
         $action_select = new TDataGridAction(array($this, 'onSelect'));
@@ -214,7 +233,7 @@ class LoteSeek extends TWindow
             
             $criteria->add(new TFilter('estoque_atual','>',0));
             
-            $criteria->add(new TFilter('fl_descarte', '!=', 'N'));
+            //$criteria->add(new TFilter('fl_descarte', '!=', 'S'));
             // load all objects according with the criteria
             $objects = $repos->load($criteria);
             

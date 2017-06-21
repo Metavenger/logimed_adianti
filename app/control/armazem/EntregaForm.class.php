@@ -155,7 +155,7 @@ class EntregaForm extends TPage
         $this->form->setFields($this->formFields);
         
         $container = new TVBox;
-        $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
+        //$container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add($this->form);
         $container->add(THBox::pack($save_button, $new_button, $back_button));
         

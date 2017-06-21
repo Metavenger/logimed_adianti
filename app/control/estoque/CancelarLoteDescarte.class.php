@@ -57,11 +57,20 @@ class CancelarLoteDescarte extends TPage
             
             $data = $this->form->getData();
             
+            if(!$data->numero)
+            {
+                throw new Exception('Informe um número de lote');
+            }
+            
             $lote = Lote::newFromNumero($data->numero);
             
             if($lote->fl_descarte == 'N')
             {
-                throw new Exception('Lote não está marcado para descarte!');
+                throw new Exception('O lote ' . $lote->numero . ' não está marcado para descarte!');
+            }
+            else if($lote->fl_descarte == 'S' and $lote->dt_descarte != null)
+            {
+                throw new Exception('O lote ' . $lote->numero . ' teve descarte confirmado em ' . TDate::date2br($lote->dt_descarte));
             }
             else
             {
