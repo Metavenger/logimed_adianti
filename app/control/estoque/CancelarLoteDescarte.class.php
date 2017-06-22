@@ -42,7 +42,7 @@ class CancelarLoteDescarte extends TPage
         $this->form->addQuickAction('Cancelar', new TAction(array($this, 'onCancelar')), 'ico_apply.png');
         
         $container = new TVBox;
-        $container->style = 'width: 50%';
+        $container->style = 'width: 30%';
         $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->add($this->form);
         

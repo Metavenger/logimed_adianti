@@ -4,6 +4,9 @@
             <menuitem label='Cancelar Descarte de Lote'>
                 <action>CancelarLoteDescarte</action>
             </menuitem>
+            <menuitem label='Confirmar Lotes para Descarte'>
+                <action>ConfirmaLoteDescarte</action>
+            </menuitem>
             <menuitem label='Selecionar Lotes para Descarte'>
                 <action>MarcarLoteDescarte</action>
             </menuitem>

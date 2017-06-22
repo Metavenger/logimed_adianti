@@ -40,7 +40,7 @@ class MarcarLoteDescarte extends TPage
         
         $mfLotes->setHeight(400);
         $mfLotes->addField('numero', 'Nº Lote', $lote_numero, 200, true);
-        $mfLotes->addField('nome_produto', 'Produto', $lote_nome, 200, true);
+        $mfLotes->addField('nome_produto', 'Produto', $lote_nome, 300, true);
         
         $row=$this->form->addQuickField('', $mfLotes);
         $row->del($row->get(0));
@@ -53,6 +53,7 @@ class MarcarLoteDescarte extends TPage
         $this->form->setFields(array($lote_numero, $lote_nome, $mfLotes, $generate_button));
         
         $container = new TTable;
+        $container->addRow()->addCell(new TXMLBreadCrumb('menu.xml', __CLASS__));
         $container->addRow()->addCell($this->form);
         $container->addRow()->addCell($generate_button);
         
@@ -77,7 +78,11 @@ class MarcarLoteDescarte extends TPage
             foreach($formdata->lotes as $l)
             {
                 $lote = Lote::newFromNumero($l->numero);
-                if($lote->fl_descarte == 'S')
+                if($lote->dt_descarte)
+                {
+                    throw new Exception('O lote ' . $lote->numero . ' já teve seu descarte confirmado!');
+                }
+                else if($lote->fl_descarte == 'S')
                 {
                     throw new Exception('O lote ' . $lote->numero . ' já está marcado para descarte!');
                 }
