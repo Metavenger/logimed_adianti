@@ -31,6 +31,7 @@ class LoteForm extends TPage
 
         // create the form fields
         $id = new TEntry('id');
+        $nome = new TEntry('nome');
         $numero = new TEntry('numero');
         $peso = new TEntry('peso');
         $valor = new TEntry('valor');
@@ -50,6 +51,7 @@ class LoteForm extends TPage
 
         // add the fields
         $this->form->addQuickField('Id', $id,  75 );
+        $this->form->addQuickField('Nome', $nome,  150, new TRequiredValidator);
         $this->form->addQuickField('Numero', $numero,  150, new TRequiredValidator);
         $this->form->addQuickField('Peso', $peso,  85, new TRequiredValidator);
         $this->form->addQuickField('Valor', $valor,  85, new TRequiredValidator);
@@ -104,11 +106,14 @@ class LoteForm extends TPage
             {
                 throw new Exception('Lote não foi marcado para descarte.');
             }
+            else if($object->dt_descarte == '')
+            {
+                $object->dt_descarte = null;
+            }
             else
             {
-                $object->dt_descarte = TDate::date2us($object->dt_descarte);
+                $object->dt_descarte = $object->dt_descarte;
             }
-            
             
             
             // stores the object

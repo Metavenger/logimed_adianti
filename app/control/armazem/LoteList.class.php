@@ -32,6 +32,7 @@ class LoteList extends TStandardList
 
         // create the form fields
         $numero = new TEntry('numero');
+        $nome = new TEntry('nome');
         $peso = new TEntry('peso');
         $valor = new TEntry('valor');
         $temperatura = new TEntry('temperatura');
@@ -45,7 +46,8 @@ class LoteList extends TStandardList
 
         // add the fields
         $this->form->addQuickField('Numero', $numero,  150 );
-        $this->form->addQuickField('Peso', $peso,  85 );
+        $this->form->addQuickField('Nome', $nome,  150 );
+        $this->form->addQuickField('Peso (g)', $peso,  85 );
         $this->form->addQuickField('Valor', $valor,  85 );
         $this->form->addQuickField('Temperatura', $temperatura,  85 );
         $this->form->addQuickField('Tipo de Descarte', $tipodescarte_id,  230 );
@@ -69,6 +71,7 @@ class LoteList extends TStandardList
 
         // creates the datagrid columns
         $column_id = new TDataGridColumn('id', 'Id', 'right');
+        $column_nome = new TDataGridColumn('nome', 'Nome', 'left');
         $column_numero = new TDataGridColumn('numero', 'Numero', 'center');
         $column_peso = new TDataGridColumn('peso', 'Peso', 'right');
         $column_valor = new TDataGridColumn('valor', 'Valor', 'right');
@@ -89,13 +92,14 @@ class LoteList extends TStandardList
         // add the columns to the DataGrid
         $this->datagrid->addColumn($column_id);
         $this->datagrid->addColumn($column_numero);
+        $this->datagrid->addColumn($column_nome);
         $this->datagrid->addColumn($column_peso);
         $this->datagrid->addColumn($column_valor);
         $this->datagrid->addColumn($column_temperatura);
-        $this->datagrid->addColumn($column_tipodescarte_id);
-        $this->datagrid->addColumn($column_fl_descarte);
         $this->datagrid->addColumn($column_estoque_atual);
         $this->datagrid->addColumn($column_total_estoque);
+        $this->datagrid->addColumn($column_tipodescarte_id);
+        $this->datagrid->addColumn($column_fl_descarte);
         $this->datagrid->addColumn($column_dt_descarte);
         
 
@@ -104,6 +108,10 @@ class LoteList extends TStandardList
         $order_id = new TAction(array($this, 'onReload'));
         $order_id->setParameter('order', 'id');
         $column_id->setAction($order_id);
+        
+        $order_nome = new TAction(array($this, 'onReload'));
+        $order_nome->setParameter('order', 'nome');
+        $column_nome->setAction($order_nome);
         
         $order_numero = new TAction(array($this, 'onReload'));
         $order_numero->setParameter('order', 'numero');
@@ -144,7 +152,7 @@ class LoteList extends TStandardList
         });
         $column_peso->setTransformer( function($value, $object, $row)
         {
-            return number_format($value, 1, ',', '.') . 'kg';
+            return number_format($value, 1, ',', '.') . 'g';
         });
         $column_temperatura->setTransformer( function($value, $object, $row)
         {
@@ -211,6 +219,11 @@ class LoteList extends TStandardList
                 // add the filter stored in the session to the criteria
                 $criteria->add(TSession::getValue('Lote_filter_numero'));
             }
+            if (TSession::getValue('Lote_filter_nome'))
+            {
+                // add the filter stored in the session to the criteria
+                $criteria->add(TSession::getValue('Lote_filter_nome'));
+            }
             if (TSession::getValue('Lote_filter_peso'))
             {
                 // add the filter stored in the session to the criteria
@@ -252,7 +265,7 @@ class LoteList extends TStandardList
                 foreach ($objects as $object)
                 {
                     $tipo_descarte = new TipoDescarte($object->tipodescarte_id);
-                    $object->tipodescarte_id = $tipo_descarte-> grupo . ' - ' . $tipo_descarte->descricao;
+                    $object->tipodescarte_id = $tipo_descarte->descricao;
                     if($object->fl_descarte == 'S')
                     {
                         $object->fl_descarte = 'Sim';
@@ -295,6 +308,8 @@ class LoteList extends TStandardList
         
         TSession::setValue('Lote_filter_numero',   NULL);
         TSession::setValue('Lote_numero', '');
+        TSession::setValue('Lote_filter_nome',   NULL);
+        TSession::setValue('Lote_nome', '');
         TSession::setValue('Lote_filter_peso',   NULL);
         TSession::setValue('Lote_peso', '');
         TSession::setValue('Lote_filter_valor',   NULL);
@@ -317,6 +332,15 @@ class LoteList extends TStandardList
             // stores the filter in the session
             TSession::setValue('Lote_filter_numero',   $filter);
             TSession::setValue('Lote_numero', $data->numero);
+        }
+        if ($data->nome)
+        {
+            // creates a filter using what the user has typed
+            $filter = new TFilter('nome', 'like', "%{$data->nome}%");
+            
+            // stores the filter in the session
+            TSession::setValue('Lote_filter_nome',   $filter);
+            TSession::setValue('Lote_nome', $data->nome);
         }
         if ($data->peso)
         {
